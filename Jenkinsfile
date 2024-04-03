@@ -27,13 +27,13 @@ pipeline {
     }
     stage ('Archive Artifact') {
       steps {
-        archiveArtifacts artifacts: 'target/*.war'
+        archiveArtifacts artifacts: '*.war'
       }
     }
     stage ('Deploy') {
       steps {
         script {
-          deploy adapters: [tomcat7(credentialsId: 'tomcatCred', path: '', url: 'http://18.171.160.74:8080')], contextPath: 'app', onFailure: false, war: 'target/*.war' 
+          deploy adapters: [tomcat7(credentialsId: 'tomcatCred', path: '', url: 'http://18.171.160.74:8080')], contextPath: 'app', onFailure: false, war: '*.war' 
         }
       }
     }
