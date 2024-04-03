@@ -11,7 +11,7 @@ pipeline {
       steps{
         sh ''' 
           java -version
-          maven -version
+          mvn -version
         '''
       }
     }
