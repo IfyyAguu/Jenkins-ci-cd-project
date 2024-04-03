@@ -33,7 +33,7 @@ pipeline {
     stage ('Deploy') {
       steps {
         script {
-          deploy adapters: [tomcat7(credentialsId: 'tomcatCred', path: '', url: 'http://http://13.40.184.14:8080')], contextPath: 'app', war: 'target/*.war' 
+          deploy adapters: [tomcat7(credentialsId: 'tomcatCred', path: '', url: 'http://13.40.184.14:8080')], contextPath: 'app', war: 'target/*.war' 
         }
       }
     }
