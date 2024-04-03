@@ -1,41 +1,50 @@
 pipeline {
-  agent any
-  
-  stages {
-    stage ('Checkout code') {
-      steps {
-              checkout scm
-      }
+    agent {
+        label 'BuildTest-server'
     }
-    stage('Verify tooling') {
-      steps{
-        sh ''' 
-          java -version
-          mvn -version
-        '''
-      }
-    }
-    stage ('Build') {
-      steps {
-        sh 'mvn -B -DskipTests clean package'
-      }
-    }
-    stage('Test') {
-      steps {
-            sh 'mvn test'
+    stages {
+        stage ('Checkout code') {
+            steps {
+                echo "Checking out source code"
+                checkout scm
+            }
+        }
+        stage('Verify tooling') {
+            steps {
+                echo "packages"
+                sh ''' 
+                    java -version
+                    mvn -version
+                '''
+            }
+        }
+        stage ('Build') {
+            steps {
+                echo "Building"
+                sh 'mvn -B -DskipTests clean package'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo "Testing"
+                sh 'mvn test'
+                stash name: 'war-file', includes: 'target/*.war'
+            }
+        }
+        stage ('Archive Artifact') {
+            steps {
+                echo "Archiving"
+                archiveArtifacts artifacts: 'target/*.war'
+            }
+        }
+        stage ('Deploy') {
+            agent {
+                label 'Deployment-server'
+            }
+            steps {
+                echo "Deploying"
+                unstash 'war-file'
+            }
         }
     }
-    stage ('Archive Artifact') {
-      steps {
-        archiveArtifacts artifacts: 'target/*.war'
-      }
-    }
-    stage ('Deploy') {
-      steps {
-        script {
-          deploy adapters: [tomcat7(credentialsId: 'tomcatCred', path: '', url: 'http://13.43.136.97:8080')], contextPath: 'app', war: 'target/*.war' 
-        }
-      }
-    }
-  }
 }
