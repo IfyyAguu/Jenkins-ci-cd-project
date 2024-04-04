@@ -31,12 +31,6 @@ pipeline {
                 stash name: 'war-file', includes: 'target/*.war'
             }
         }
-        stage ('Archive Artifact') {
-            steps {
-                echo "Archiving"
-                archiveArtifacts artifacts: 'target/*.war'
-            }
-        }
         stage ('Deploy') {
             agent {
                 label 'Deployment-server'
@@ -50,5 +44,24 @@ pipeline {
             }
         }
     }
+    post {
+        success {
+            // Send email notification on successful build
+            emailext (
+                to: 'ifeomaagu43@gmail.com',
+                subject: "Jenkins Pipeline - Build Successful",
+                body: "Your Jenkins pipeline for Java Calculator build, test and deploy was successful. View console output: ${env.BUILD_URL}",
+                attachLog: true
+            )
+        }
+        failure {
+            // Send email notification on failed build
+            emailext (
+                to: 'ifeomaagu43@gmail.com',
+                subject: "Jenkins Pipeline - Build Failed",
+                body: "Your Jenkins pipeline for Java Calculator build, test and deploy failed. View console output: ${env.BUILD_URL}",
+                attachLog: true
+            )
+        }
+    }
 }
-
