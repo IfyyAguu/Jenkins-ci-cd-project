@@ -47,6 +47,7 @@ pipeline {
     post {
         success {
             // Send email notification on successful build
+             build.result.toString().equals('SUCCESS')
             emailext (
                 to: 'ifeomaagu43@gmail.com',
                 subject: "Jenkins Pipeline - Build Successful",
@@ -56,6 +57,7 @@ pipeline {
         }
         failure {
             // Send email notification on failed build
+            build.result.toString().equals('FAILURE')
             emailext (
                 to: 'ifeomaagu43@gmail.com',
                 subject: "Jenkins Pipeline - Build Failed",
