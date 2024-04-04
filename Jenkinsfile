@@ -44,7 +44,11 @@ pipeline {
             steps {
                 echo "Deploying"
                 unstash 'war-file'
+                sshagent(credentials: ['Jenkins-main']) {
+                    sh 'scp -o StrictHostKeyChecking=no war-file/*.war centos@172.31.46.162:~/'
+                }
             }
         }
     }
 }
+
